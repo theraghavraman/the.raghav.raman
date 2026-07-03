@@ -1,4 +1,4 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -291,7 +291,11 @@
   /* ── SHARED SECTION HEADING ── */
   .section{padding:88px 0;}
   .section-head{margin-bottom:48px;max-width:60ch;}
-  .section-head .eyebrow{margin-bottom:12px;}
+  .section-head .eyebrow{
+    margin-bottom:12px;display:flex;align-items:center;gap:9px;
+  }
+  .section-head .eyebrow::before{content:none;}
+  .section-icon{font-size:0.95rem;filter:drop-shadow(0 0 6px currentColor);}
   .section-head h2{
     font-family:var(--display);font-weight:600;color:var(--ink);
     font-size:clamp(1.9rem,3.4vw,2.6rem);letter-spacing:-0.01em;
@@ -333,9 +337,9 @@
     box-shadow:0 24px 50px rgba(0,0,0,0.55),0 0 0 1px var(--accent);
   }
   .skill-icon{
-    width:46px;height:46px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-    background:var(--tint);color:var(--accent);font-size:1.2rem;margin-bottom:18px;
-    box-shadow:0 0 18px var(--tint);
+    display:flex;align-items:center;justify-content:center;width:46px;height:46px;
+    color:var(--accent);font-size:1.65rem;margin-bottom:18px;
+    filter:drop-shadow(0 0 10px var(--tint));
   }
   .skill-card h3{font-family:var(--display);font-size:1.08rem;font-weight:600;margin-bottom:8px;color:var(--ink);}
   .skill-card p{font-size:0.92rem;color:var(--muted);line-height:1.55;}
@@ -432,6 +436,32 @@
     width:100%;height:1px;
     background:linear-gradient(90deg,transparent,var(--indigo),var(--teal),var(--coral),transparent);
     opacity:0.35;margin:0;
+  }
+
+  /* ── MOBILE PERFORMANCE OVERRIDES ──
+     backdrop-filter + large animated blur() are the two most GPU-expensive
+     properties on phones, and this page had 15+ elements using both at once.
+     Below we swap blur-based glass panels for solid panels, stop the
+     nebula/aurora/ring animations from repainting every frame, and trim the
+     canvas + intro effects — all invisible in terms of layout, just cheaper. */
+  @media(max-width:760px){
+    header.nav{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(3,4,13,0.92);}
+    .ticker{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(8,9,20,0.85);}
+    .skill-card,.log-card,.cert-item{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(13,14,28,0.92);}
+    .contact-links a{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(13,14,28,0.9);}
+
+    /* keep the nebula glow but stop the 18–35s infinite transform loop
+       (this is what forces continuous compositing of a blurred layer)
+       and shrink the blur radius, which is the costliest part of the paint */
+    .nebula{animation:none;filter:blur(55px);}
+    .nebula--1{width:420px;height:420px;}
+    .nebula--2{width:460px;height:460px;}
+    .nebula--3{width:380px;height:380px;}
+    .nebula--4{width:280px;height:280px;}
+
+    .aurora{animation:none;opacity:0.75;filter:blur(1px);}
+    .orbit-bg{display:none;}
+    .hero-graphic::before,.hero-graphic::after{animation:none;}
   }
 </style>
 </head>
@@ -588,7 +618,7 @@
   <section class="section" id="about">
     <div class="wrap">
       <div class="section-head reveal">
-        <p class="eyebrow">01 — about</p>
+        <p class="eyebrow"><i class="fas fa-user-astronaut section-icon" style="color:var(--indigo);" aria-hidden="true"></i>01 — about</p>
         <h2>About me</h2>
       </div>
       <div class="about-body">
@@ -612,7 +642,7 @@
   <section class="section" id="skills">
     <div class="wrap">
       <div class="section-head reveal">
-        <p class="eyebrow">02 — stack</p>
+        <p class="eyebrow"><i class="fas fa-layer-group section-icon" style="color:var(--amber);" aria-hidden="true"></i>02 — stack</p>
         <h2>Technical skills</h2>
       </div>
       <div class="skills-grid">
@@ -656,7 +686,7 @@
   <section class="section" id="projects">
     <div class="wrap">
       <div class="section-head reveal">
-        <p class="eyebrow">03 — work</p>
+        <p class="eyebrow"><i class="fas fa-rocket section-icon" style="color:var(--coral);" aria-hidden="true"></i>03 — work</p>
         <h2>Featured projects</h2>
       </div>
       <div class="work-grid">
@@ -695,7 +725,7 @@
   <section class="section" id="certifications">
     <div class="wrap">
       <div class="section-head reveal">
-        <p class="eyebrow">04 — credentials</p>
+        <p class="eyebrow"><i class="fas fa-folder-open section-icon" style="color:var(--teal);" aria-hidden="true"></i>04 — credentials</p>
         <h2>Certifications</h2>
       </div>
       <div class="cert-accordion">
@@ -854,11 +884,19 @@
   (function(){
     const canvas = document.getElementById('starfield');
     const ctx = canvas.getContext('2d');
-    let stars=[], nebStars=[];
+    const isMobile = window.matchMedia('(max-width:760px)').matches
+                     || (navigator.hardwareConcurrency && navigator.hardwareConcurrency<=4);
+    const divisor = isMobile ? 18000 : 7500;   // fewer stars on phones/low-core devices
+    const maxStars = isMobile ? 90 : 400;
+    const frameInterval = isMobile ? 1000/30 : 1000/60; // cap phones to ~30fps
+    let stars=[];
+    let lastFrame=0;
+    let running=true;
+
     function resize(){
       canvas.width=window.innerWidth;
       canvas.height=window.innerHeight;
-      const count=Math.floor((canvas.width*canvas.height)/7500);
+      const count=Math.min(maxStars,Math.floor((canvas.width*canvas.height)/divisor));
       stars=Array.from({length:count},()=>({
         x:Math.random()*canvas.width,
         y:Math.random()*canvas.height,
@@ -869,6 +907,9 @@
       }));
     }
     function draw(t){
+      if(!running){requestAnimationFrame(draw);return;}
+      if(t-lastFrame<frameInterval){requestAnimationFrame(draw);return;}
+      lastFrame=t;
       ctx.clearRect(0,0,canvas.width,canvas.height);
       stars.forEach(s=>{
         const twinkle=reduceMotion?0.8:0.45+0.55*Math.sin(s.phase+t*0.001*s.speed);
@@ -881,8 +922,8 @@
           ctx.fillStyle=`rgba(255,255,255,${a})`;
         }
         ctx.fill();
-        // tiny glow on bigger stars
-        if(s.r>1.1&&!reduceMotion){
+        // tiny glow on bigger stars — skipped on mobile, it's a second draw call per star
+        if(s.r>1.1&&!reduceMotion&&!isMobile){
           ctx.beginPath();
           ctx.arc(s.x,s.y,s.r*2.5,0,Math.PI*2);
           ctx.fillStyle=`rgba(255,255,255,${a*0.08})`;
@@ -891,6 +932,7 @@
       });
       if(!reduceMotion) requestAnimationFrame(draw);
     }
+    document.addEventListener('visibilitychange',()=>{running=!document.hidden;});
     window.addEventListener('resize',resize);
     resize();
     requestAnimationFrame(draw);
@@ -915,7 +957,7 @@
   (function(){
     const overlay=document.getElementById('warp-overlay');
     if(reduceMotion){overlay.style.display='none';return;}
-    const lineCount=48;
+    const lineCount=window.matchMedia('(max-width:760px)').matches ? 22 : 48;
     for(let i=0;i<lineCount;i++){
       const line=document.createElement('div');
       line.className='warp-line';
@@ -987,4 +1029,3 @@
 </script>
 </body>
 </html>
-
