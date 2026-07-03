@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -980,140 +980,11 @@
         panel.style.height=expanded?'0px':panel.scrollHeight+'px';
       });
       window.addEventListener('resize',()=>{
-        if(header.getAttribute('aria-expanded')==='true') panel.style.height=Step-by-step Implementation Guide with Inline Comments
-
-1. Implement Elastic Scroll Animations
-Explanation: Detect elements as they scroll into view and apply an elastic jump animation for a smooth entrance.
-
-TypeScript:
-// Observe elements to trigger jump-in animation
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    // If element is visible in viewport
-    if(entry.isIntersecting){
-      // Add class to start animation
-      entry.target.classList.add('jump-in');
-    }
-  });
-});
-
-// Attach observer to all elements with the 'jump-element' class
-document.querySelectorAll('.jump-element').forEach(el => observer.observe(el));
-
-CSS:
-/* Initial state: hidden and slightly moved down */
-.jump-element {
-  opacity: 0;  /* invisible initially */
-  transform: translateY(40px) scale(0.95); /* shift down and shrink */
-  transition: opacity 0.6s ease, /* fade in */
-              transform 0.8s cubic-bezier(0.28, 1.25, 0.38, 1.1); /* elastic motion */
-}
-
-/* Activated state: visible and in place */
-.jump-element.jump-in {
-  opacity: 1; /* fully visible */
-  transform: translateY(0) scale(1); /* reset transform */
-}
-
----
-
-2. Add Multi-step Glassmorphic Interactive States
-Explanation: Create a glass-like interface with hover-up scaling and subtle shadows for interactivity.
-
-TypeScript:
-// Select all glass cards
-const cards = document.querySelectorAll<HTMLDivElement>('.glass-card');
-
-cards.forEach(card => {
-  // On mouse enter, add hover class for lift effect
-  card.addEventListener('mouseenter', () => card.classList.add('hover-up'));
-  // On mouse leave, remove hover class
-  card.addEventListener('mouseleave', () => card.classList.remove('hover-up'));
-});
-
-CSS:
-/* Base glass card styling */
-.glass-card {
-  background: rgba(255,255,255,0.05); /* translucent background */
-  border: 1px solid rgba(255,255,255,0.08); /* subtle border */
-  backdrop-filter: blur(18px); /* glass effect */
-  transition: transform 0.3s ease, /* smooth lift */
-              box-shadow 0.3s ease; /* smooth shadow */
-}
-
-/* Hover state: raised and highlighted */
-.glass-card.hover-up {
-  transform: translateY(-6px) scale(1.02); /* lift and slight scale */
-  box-shadow: 0 12px 32px rgba(0,0,0,0.35); /* glowing shadow */
-}
-
----
-
-3. Create High-fidelity 3D Layer Separation
-Explanation: Utilize perspective and translateZ transforms to give depth and high-fidelity 3D visual separation.
-
-CSS:
-/* Container provides perspective for child layers */
-.layer-container {
-  perspective: 1200px; /* Controls depth perception */
-}
-
-/* Layers preserve 3D transform context */
-.layer {
-  transform-style: preserve-3d; /* Enable 3D rendering */
-  transition: transform 0.5s ease; /* Smooth movement */
-}
-
-/* Depth layers for parallax-like separation */
-.layer.depth1 { transform: translateZ(30px); } /* Closer layer */
-.layer.depth2 { transform: translateZ(60px); } /* Further layer */
-
----
-
-4. Manage Dynamic Local State with TypeScript on Button Click
-Explanation: Toggle an active state with TypeScript events to trigger instant micro-interactions.
-
-TypeScript:
-// Define local state interface
-interface State {
-  active: boolean;
-}
-
-// Get reference to the magic button
-const button = document.getElementById('magic-btn') as HTMLButtonElement;
-let state: State = { active: false }; // Initial state
-
-// Handle button click to toggle state
-button.addEventListener('click', () => {
-  state.active = !state.active; // Flip the boolean
-  // Add or remove the active class on the body
-  document.body.classList.toggle('active-state', state.active);
-});
-
----
-
-5. Build Instant Micro-Interactions
-Explanation: Apply quick transitions or visual effects for responsive micro-interactions.
-
-CSS:
-/* When the body is active, highlight glass cards */
-.active-state .glass-card {
-  box-shadow: 0 0 25px rgba(108,111,255,0.4); /* blue glow */
-  transform: scale(1.03); /* slight scale up */
-}
-
----
-
-Summary:
-* Elastic scroll animations trigger smooth jump-in effects.
-* Glassmorphic cards respond with hover-up states.
-* 3D layers create high-fidelity visual depth.
-* TypeScript manages local state for dynamic UI changes.
-* Micro-interactions enhance responsiveness with glows and scaling.
-panel.scrollHeight+'px';
+        if(header.getAttribute('aria-expanded')==='true') panel.style.height=panel.scrollHeight+'px';
       });
     });
   })();
 </script>
 </body>
 </html>
+
