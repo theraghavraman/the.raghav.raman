@@ -2308,19 +2308,22 @@
       svg: `<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg"><rect width="800" height="500" fill="#1e1320"/><circle cx="400" cy="240" r="145" fill="none" stroke="#FF6B8A" stroke-opacity="0.35" stroke-dasharray="6 8"/><circle cx="400" cy="240" r="64" fill="rgba(255,107,138,0.18)" stroke="#FF6B8A" stroke-width="2"/><path d="M380 240l15 15 30-32" fill="none" stroke="#2FE3D2" stroke-width="4" stroke-linecap="round"/><rect x="120" y="100" width="160" height="56" rx="6" fill="#29192c" stroke="#FFC15E"/><text x="145" y="133" fill="#FFC15E" font-family="monospace" font-size="14">read_file()</text><rect x="520" y="100" width="160" height="56" rx="6" fill="#29192c" stroke="#2FE3D2"/><text x="542" y="133" fill="#2FE3D2" font-family="monospace" font-size="14">write_test()</text><rect x="320" y="370" width="160" height="56" rx="6" fill="#29192c" stroke="#6C6FFF"/><text x="345" y="403" fill="#6C6FFF" font-family="monospace" font-size="14">run_tests()</text></svg>`
     },
     {
-      id: 'etl', number: '04', featured: false,
-      title: 'ETL Schema Validation Toolkit',
+      id: 'etl', number: '04', featured: true,
+      title: 'ETLGuard — ETL Validation Toolkit',
       kicker: '04 / DATA QUALITY & PIPELINE GUARDRAILS',
       categories: ['data', 'backend'],
       accent: '#FFC15E',
-      summary: 'Reusable pre-load validation layer for cleaning, type-checking, and auditing CSV, Excel, and API feeds before MySQL ingestion.',
-      stack: ['Python', 'Pydantic', 'Pytest', 'MySQL', 'ETL'],
+      summary: 'Published Python data-quality toolkit for CSV, Excel and API feeds, with Pydantic validation, detailed rejects and transactional MySQL loads. Try the shared validation core in a live browser demo.',
+      liveUrl: 'https://theraghavraman.github.io/etl-validation-toolkit/',
+      sourceUrl: 'https://github.com/theraghavraman/etl-validation-toolkit',
+      releaseUrl: 'https://github.com/theraghavraman/etl-validation-toolkit/releases/tag/v0.1.3',
+      stack: ['Python', 'Pydantic', 'SQLAlchemy', 'MySQL', 'Pytest', 'Pyodide'],
       built: [
-        'Configurable ingestion rules for multi-source CSV, Excel, and REST API payloads.',
-        'Strict Pydantic schema contracts with automated type coercion and null-policy checks.',
-        'Quarantine & rejected-row audit reporting so bad records never corrupt downstream tables.'
+        'YAML pipelines clean and validate CSV, Excel and paginated REST feeds, with typed models and field-level reject reports.',
+        'Staging tables support append, replacement, upsert and SCD Type 2 history; reconciliation, audit and batch ledger commit atomically.',
+        'Safe same-UUID retries, a real MySQL test matrix, and a Pyodide demo that runs the shared Python validation core.'
       ],
-      signal: 'Shifts data-quality failures left — catching schema drift before warehouse loading.',
+      signal: 'v0.1.3 verified: 137 tests, 91.19% coverage, all four Python 3.11/3.13 × MySQL 8.0/8.4 combinations, 11 browser checks and 9 installed-wheel CLI checks.',
       svg: `<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg"><rect width="800" height="500" fill="#191812"/><g fill="none" stroke="#FFC15E" stroke-width="1.8"><polygon points="110,160 230,105 350,160 230,215"/><polygon points="110,220 230,165 350,220 230,275"/><polygon points="110,280 230,225 350,280 230,335"/></g><path d="M370 220h90" stroke="#2FE3D2" stroke-width="2.5" stroke-dasharray="5 5"/><rect x="475" y="110" width="220" height="230" rx="10" fill="#232117" stroke="#2FE3D2" stroke-width="2"/><text x="505" y="150" fill="#2FE3D2" font-family="monospace" font-size="13">PYDANTIC GATE</text><path d="M505 185h110M505 225h130M505 265h95" stroke="#8B90B8" stroke-width="3"/><text x="120" y="430" fill="#F0F2FF" font-family="monospace" font-size="13" letter-spacing="2">RAW FEEDS → SCHEMA CONTRACTS → QUARANTINE OR MYSQL LOAD</text></svg>`
     },
     {
@@ -2454,6 +2457,7 @@
           </div>
           <div class="project-actions">
             <button type="button" class="text-link" data-open-project="${p.id}">Inspect architecture →</button>
+            ${p.sourceUrl ? `<a class="text-link" href="${p.sourceUrl}" target="_blank" rel="noopener noreferrer">GitHub ↗</a>` : ''}
             ${p.liveUrl ? `<a class="text-link" href="${p.liveUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--accent-ink);">Live platform ↗</a>` : `<span class="mono" style="color:var(--muted);">SYS // ${p.number}</span>`}
           </div>
         </div>
@@ -2507,6 +2511,8 @@
           </div>
           <h4>Engineering Signal</h4>
           <p style="font-size:0.86rem;color:var(--muted);line-height:1.65;">${p.signal}</p>
+          ${p.sourceUrl ? `<p><a class="text-link" href="${p.sourceUrl}" target="_blank" rel="noopener noreferrer">View source on GitHub ↗</a></p>` : ''}
+          ${p.releaseUrl ? `<p><a class="text-link" href="${p.releaseUrl}" target="_blank" rel="noopener noreferrer">Download verified release ↗</a></p>` : ''}
           ${p.liveUrl ? `<div style="margin-top:16px;"><a class="btn-primary" href="${p.liveUrl}" target="_blank" rel="noopener noreferrer">Launch Live Platform ↗</a></div>` : ''}
         </div>
       </div>
